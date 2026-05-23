@@ -37,14 +37,17 @@ export default function VendorOrdersPage() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-ink">Orders</h1>
-        <div className="flex gap-1">
+    <div className="space-y-6 py-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Incoming Orders</h1>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Track customer orders and manage fulfillment status</p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 bg-surface/30 border border-border/80 p-1 rounded-xl w-fit">
           {['', ...STATUS_FLOW].map(s => (
             <button key={s} onClick={() => { setStatus(s); setPage(1); }}
-              className={cn('px-3 py-1.5 text-xs border rounded capitalize transition-colors',
-                statusFilter === s ? 'bg-ink text-white border-ink' : 'border-border hover:bg-tag')}>
+              className={cn('px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition-all',
+                statusFilter === s ? 'bg-primary text-white shadow-glow-primary' : 'hover:bg-primary/10 hover:text-ink text-subtle')}>
               {s || 'All'}
             </button>
           ))}
@@ -53,41 +56,41 @@ export default function VendorOrdersPage() {
 
       {isLoading ? <PageLoader /> : (
         <>
-          <div className="bg-surface border border-border rounded overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-tag">
-                  {['Order', 'Customer', 'Items', 'Total', 'Status', 'Date', ''].map(h => (
-                    <th key={h} className="text-left px-4 py-2.5 font-mono text-[10px] font-semibold tracking-widest uppercase text-muted">{h}</th>
+                <tr className="border-b border-border/60 bg-tag/30">
+                  {['Order Ref', 'Customer Info', 'Items Count', 'Net Amount', 'Current Status', 'Date Created', ''].map(h => (
+                    <th key={h} className="px-5 py-3 font-mono text-[9px] font-bold tracking-wider uppercase text-muted/70">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {data?.orders?.map(o => {
                   const next = nextStatus(o.deliveryStatus);
                   return (
-                    <tr key={o._id} className="hover:bg-tag/50 transition-colors">
-                      <td className="px-4 py-3 font-mono text-xs">#{o._id.slice(-8).toUpperCase()}</td>
-                      <td className="px-4 py-3">
-                        <div className="text-subtle">{o.user?.name}</div>
-                        <div className="text-xs text-muted">{o.user?.email}</div>
+                    <tr key={o._id} className="hover:bg-surface/20 transition-colors">
+                      <td className="px-5 py-4 font-mono font-bold text-ink">#{o._id.slice(-8).toUpperCase()}</td>
+                      <td className="px-5 py-4">
+                        <div className="font-bold text-ink/90">{o.user?.name}</div>
+                        <div className="text-[10px] text-muted/70 font-mono mt-0.5">{o.user?.email}</div>
                       </td>
-                      <td className="px-4 py-3 text-subtle text-xs">{o.items?.length} item(s)</td>
-                      <td className="px-4 py-3 font-mono text-xs">{formatCurrency(o.total)}</td>
-                      <td className="px-4 py-3">
-                        <span className={cn('font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded-sm border',
+                      <td className="px-5 py-4 text-subtle font-medium">{o.items?.length || 0} items</td>
+                      <td className="px-5 py-4 font-mono font-semibold text-indigo-400">{formatCurrency(o.total)}</td>
+                      <td className="px-5 py-4">
+                        <span className={cn('font-mono text-[9px] font-bold px-2 py-0.5 rounded-full border bg-tag text-subtle border-border',
                           ORDER_STATUS[o.deliveryStatus]?.color)}>
                           {ORDER_STATUS[o.deliveryStatus]?.label}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-subtle text-xs">{formatDate(o.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex gap-2">
+                      <td className="px-5 py-4 text-muted/80 font-mono text-[10px]">{formatDate(o.createdAt)}</td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center gap-3.5 justify-end">
                           <button onClick={() => setSelected(o)}
-                            className="text-xs text-subtle hover:text-ink transition-colors">View</button>
+                            className="text-xs font-semibold text-subtle hover:text-primary transition-colors">Details</button>
                           {next && (
                             <Button size="sm" onClick={() => updateStatus.mutate({ id: o._id, status: next })}
-                              loading={updateStatus.isPending}>
+                              loading={updateStatus.isPending} className="rounded-xl font-mono text-[9px] tracking-wider uppercase">
                               → {ORDER_STATUS[next]?.label}
                             </Button>
                           )}
@@ -99,7 +102,7 @@ export default function VendorOrdersPage() {
               </tbody>
             </table>
             {!data?.orders?.length && (
-              <div className="text-center py-12 text-subtle text-sm">No orders found</div>
+              <div className="text-center py-16 text-muted/70 text-xs">No matching customer orders found</div>
             )}
           </div>
           <Pagination page={page} pages={Math.ceil((data?.total || 0) / 15)} onChange={setPage} />
@@ -107,27 +110,27 @@ export default function VendorOrdersPage() {
       )}
 
       {/* Order detail modal */}
-      <Modal open={!!selected} onClose={() => setSelected(null)} title={`Order #${selected?._id?.slice(-8).toUpperCase()}`} width="max-w-lg">
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={`Order Reference: #${selected?._id?.slice(-8).toUpperCase()}`} width="max-w-lg">
         {selected && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div><div className="label">Customer</div><div className="text-ink">{selected.user?.name}</div></div>
-              <div><div className="label">Total</div><div className="font-mono text-ink">{formatCurrency(selected.total)}</div></div>
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4 text-xs font-medium bg-surface/30 border border-border/80 p-4 rounded-xl">
+              <div><div className="label">Customer Contact</div><div className="text-ink font-semibold">{selected.user?.name}</div></div>
+              <div><div className="label">Grand Total</div><div className="font-heading text-indigo-400 font-bold">{formatCurrency(selected.total)}</div></div>
               <div className="col-span-2">
-                <div className="label">Shipping Address</div>
-                <div className="text-subtle">{selected.shippingAddress?.line1}, {selected.shippingAddress?.city}</div>
+                <div className="label">Delivery Destination</div>
+                <div className="text-subtle/90 leading-relaxed font-semibold">{selected.shippingAddress?.line1}, {selected.shippingAddress?.line2 ? `${selected.shippingAddress.line2}, ` : ''}{selected.shippingAddress?.city}, {selected.shippingAddress?.state} — {selected.shippingAddress?.pincode}</div>
               </div>
             </div>
-            <div>
-              <div className="label mb-2">Items</div>
-              <div className="space-y-2">
+            <div className="space-y-3">
+              <div className="label">Order Manifest Items</div>
+              <div className="divide-y divide-border/60 max-h-[220px] overflow-y-auto pr-1">
                 {selected.items?.map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 bg-tag rounded border border-border overflow-hidden flex-shrink-0">
-                      {item.image ? <img src={item.image} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-muted text-xs">□</div>}
+                  <div key={i} className="flex items-center gap-3 py-2.5 text-xs font-medium">
+                    <div className="w-8 h-8 bg-tag/30 rounded-lg border border-border/80 overflow-hidden flex-shrink-0 flex items-center justify-center p-0.5">
+                      {item.image ? <img src={item.image} alt="" className="w-full h-full object-contain rounded" /> : <div className="w-full h-full flex items-center justify-center text-muted/50 text-[10px]">□</div>}
                     </div>
-                    <span className="flex-1 text-subtle truncate">{item.title} ×{item.quantity}</span>
-                    <span className="font-mono text-xs">{formatCurrency(item.price * item.quantity)}</span>
+                    <span className="flex-1 text-ink/90 truncate font-semibold">{item.title} <span className="text-muted font-normal">×{item.quantity}</span></span>
+                    <span className="font-mono text-indigo-400 font-bold shrink-0">{formatCurrency(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>

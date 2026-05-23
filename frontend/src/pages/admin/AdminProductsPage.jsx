@@ -28,47 +28,50 @@ export default function AdminProductsPage() {
   const debouncedSearch = debounce(setSearch, 400);
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-ink">Products <span className="text-subtle font-normal text-sm">({data?.total || 0})</span></h1>
-        <input placeholder="Search products…" onChange={e => debouncedSearch(e.target.value)} className="input max-w-xs" />
+    <div className="space-y-6 py-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Global Catalog</h1>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Audit merchant product listings, pricing details, and moderation visibility</p>
+        </div>
+        <input placeholder="Search product title..." onChange={e => debouncedSearch(e.target.value)} className="input max-w-xs" />
       </div>
 
       {isLoading ? <PageLoader /> : (
         <>
-          <div className="bg-surface border border-border rounded overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-tag">
-                  {['Product', 'Category', 'Vendor', 'Price', 'Stock', 'Status', ''].map(h => (
-                    <th key={h} className="text-left px-4 py-2.5 font-mono text-[10px] font-semibold tracking-widest uppercase text-muted">{h}</th>
+                <tr className="border-b border-border/60 bg-tag/30">
+                  {['Product Details', 'Category', 'Store Vendor', 'Unit Price', 'Stock Level', 'Moderation', 'Actions'].map(h => (
+                    <th key={h} className="px-5 py-3 font-mono text-[9px] font-bold tracking-wider uppercase text-muted/70">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {data?.products?.map(p => (
-                  <tr key={p._id} className="hover:bg-tag/50 transition-colors">
-                    <td className="px-4 py-3">
+                  <tr key={p._id} className="hover:bg-surface/20 transition-colors">
+                    <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-tag rounded border border-border overflow-hidden flex-shrink-0">
+                        <div className="w-10 h-10 bg-tag/30 rounded-xl border border-border/80 overflow-hidden flex-shrink-0 flex items-center justify-center p-0.5">
                           {p.images?.[0]?.url
-                            ? <img src={p.images[0].url} alt="" className="w-full h-full object-cover" />
-                            : <div className="w-full h-full flex items-center justify-center text-muted text-xs">□</div>}
+                            ? <img src={p.images[0].url} alt="" className="w-full h-full object-contain rounded-lg" />
+                            : <div className="w-full h-full flex items-center justify-center text-muted/50 text-xs">□</div>}
                         </div>
-                        <span className="font-medium text-ink max-w-[160px] truncate">{p.title}</span>
+                        <span className="font-bold text-ink max-w-[200px] truncate">{p.title}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-subtle text-xs">{p.category}</td>
-                    <td className="px-4 py-3 text-subtle text-xs">{p.vendor?.storeName || '—'}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{formatCurrency(p.price)}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{p.stock}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={p.isActive ? 'success' : 'danger'}>{p.isActive ? 'Active' : 'Hidden'}</Badge>
+                    <td className="px-5 py-4 text-subtle font-medium">{p.category}</td>
+                    <td className="px-5 py-4 text-subtle font-medium">{p.vendor?.storeName || '—'}</td>
+                    <td className="px-5 py-4 font-mono font-semibold text-indigo-400">{formatCurrency(p.price)}</td>
+                    <td className="px-5 py-4 font-mono font-bold text-ink/90">{p.stock} units</td>
+                    <td className="px-5 py-4">
+                      <Badge variant={p.isActive ? 'success' : 'danger'} className="text-[9px] uppercase font-mono tracking-wider">{p.isActive ? 'Active' : 'Hidden'}</Badge>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-4">
                       <Button size="sm" variant={p.isActive ? 'outline' : 'primary'}
-                        onClick={() => toggleProduct.mutate(p._id)} loading={toggleProduct.isPending}>
-                        {p.isActive ? 'Hide' : 'Show'}
+                        onClick={() => toggleProduct.mutate(p._id)} loading={toggleProduct.isPending} className="rounded-xl">
+                        {p.isActive ? 'Hide Listing' : 'Publish Listing'}
                       </Button>
                     </td>
                   </tr>
@@ -76,7 +79,7 @@ export default function AdminProductsPage() {
               </tbody>
             </table>
             {!data?.products?.length && (
-              <div className="text-center py-12 text-subtle text-sm">No products found</div>
+              <div className="text-center py-16 text-muted/70 text-xs">No matching products found in the catalog database</div>
             )}
           </div>
           <Pagination page={page} pages={data?.pages || 1} onChange={setPage} />

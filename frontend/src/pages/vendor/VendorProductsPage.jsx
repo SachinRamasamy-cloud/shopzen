@@ -95,9 +95,12 @@ export default function VendorProductsPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 py-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-ink">Products</h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Product Inventory</h1>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Manage and audit your listed catalog items</p>
+        </div>
         <Button onClick={() => { setEditing(null); setForm(EMPTY_FORM); setFiles([]); setModal('create'); }}>
           + Add Product
         </Button>
@@ -105,46 +108,49 @@ export default function VendorProductsPage() {
 
       {isLoading ? <PageLoader /> : (
         <>
-          <div className="bg-surface border border-border rounded overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-tag">
-                  {['Product', 'Category', 'Price', 'Stock', 'Status', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-4 py-2.5 font-mono text-[10px] font-semibold tracking-widest uppercase text-muted">{h}</th>
+                <tr className="border-b border-border/60 bg-tag/30">
+                  {['Product Details', 'Category', 'Base Price', 'Stock Level', 'Status', 'Actions'].map(h => (
+                    <th key={h} className="px-5 py-3 font-mono text-[9px] font-bold tracking-wider uppercase text-muted/70">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {data?.products?.map(p => (
-                  <tr key={p._id} className="hover:bg-tag/50 transition-colors">
-                    <td className="px-4 py-3">
+                  <tr key={p._id} className="hover:bg-surface/20 transition-colors">
+                    <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-tag rounded border border-border overflow-hidden flex-shrink-0">
+                        <div className="w-10 h-10 bg-tag/30 rounded-xl border border-border/80 overflow-hidden flex-shrink-0 flex items-center justify-center p-0.5">
                           {p.images?.[0]?.url
-                            ? <img src={p.images[0].url} alt="" className="w-full h-full object-cover" />
-                            : <div className="w-full h-full flex items-center justify-center text-muted text-xs">□</div>}
+                            ? <img src={p.images[0].url} alt="" className="w-full h-full object-contain rounded-lg" />
+                            : <div className="w-full h-full flex items-center justify-center text-muted/50 text-xs">□</div>}
                         </div>
                         <div>
-                          <div className="font-medium text-ink line-clamp-1 max-w-[180px]">{p.title}</div>
-                          <div className="font-mono text-[10px] text-muted">{p.sku || '—'}</div>
+                          <div className="font-bold text-ink line-clamp-1 max-w-[200px]">{p.title}</div>
+                          <div className="font-mono text-[9px] text-muted/70 mt-0.5">SKU: {p.sku?.toUpperCase() || 'N/A'}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-subtle text-xs">{p.category}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{formatCurrency(p.price)}</td>
-                    <td className="px-4 py-3">
-                      <span className={cn('font-mono text-xs font-semibold', p.stock === 0 ? 'text-red-600' : p.stock <= 5 ? 'text-amber-600' : 'text-green-600')}>
-                        {p.stock}
+                    <td className="px-5 py-4 text-subtle font-medium">{p.category}</td>
+                    <td className="px-5 py-4 font-mono font-semibold text-indigo-400">{formatCurrency(p.price)}</td>
+                    <td className="px-5 py-4">
+                      <span className={cn('font-mono font-bold px-2 py-0.5 rounded-md text-[10px] border',
+                        p.stock === 0 ? 'text-rose-400 bg-rose-500/10 border-rose-500/20' :
+                        p.stock <= 5 ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' :
+                        'text-emerald-400 bg-emerald-500/10 border-emerald-500/20')}>
+                        {p.stock} units
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={p.isActive ? 'success' : 'danger'}>{p.isActive ? 'Active' : 'Inactive'}</Badge>
+                    <td className="px-5 py-4">
+                      <Badge variant={p.isActive ? 'success' : 'danger'} className="text-[9px] uppercase font-mono tracking-wider">{p.isActive ? 'Active' : 'Inactive'}</Badge>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <button onClick={() => openEdit(p)} className="text-xs text-subtle hover:text-ink transition-colors">Edit</button>
-                        <button onClick={() => openStock(p)} className="text-xs text-subtle hover:text-ink transition-colors">Stock</button>
-                        <button onClick={() => deleteMutation.mutate(p._id)} className="text-xs text-red-500 hover:text-red-700 transition-colors">Delete</button>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3.5">
+                        <button onClick={() => openEdit(p)} className="text-xs font-semibold text-subtle hover:text-primary transition-colors">Edit</button>
+                        <button onClick={() => openStock(p)} className="text-xs font-semibold text-subtle hover:text-primary transition-colors">Stock</button>
+                        <button onClick={() => deleteMutation.mutate(p._id)} className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors">Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -152,7 +158,7 @@ export default function VendorProductsPage() {
               </tbody>
             </table>
             {!data?.products?.length && (
-              <div className="text-center py-12 text-subtle text-sm">No products yet. Add your first product.</div>
+              <div className="text-center py-16 text-muted/70 text-xs">No products created yet. click above to add your first listing.</div>
             )}
           </div>
           <Pagination page={page} pages={Math.ceil((data?.total || 0) / 15)} onChange={setPage} />
@@ -163,42 +169,45 @@ export default function VendorProductsPage() {
       <Modal
         open={modal === 'create' || modal === 'edit'}
         onClose={() => { setModal(null); setEditing(null); }}
-        title={editing ? 'Edit Product' : 'New Product'}
+        title={editing ? 'Edit Catalog Product' : 'Register New Product'}
         width="max-w-2xl"
         footer={
           <>
-            <Button variant="outline" onClick={() => { setModal(null); setEditing(null); }}>Cancel</Button>
-            <Button onClick={handleSubmit} loading={createMutation.isPending || updateMutation.isPending}>
-              {editing ? 'Save Changes' : 'Create Product'}
+            <Button variant="outline" onClick={() => { setModal(null); setEditing(null); }} className="rounded-xl">Cancel</Button>
+            <Button onClick={handleSubmit} loading={createMutation.isPending || updateMutation.isPending} className="rounded-xl">
+              {editing ? 'Save Changes' : 'Publish Product'}
             </Button>
           </>
         }
       >
         <div className="grid grid-cols-2 gap-4">
           <Input label="Title *"       value={form.title}       onChange={e => set('title', e.target.value)}       className="col-span-2" />
-          <div className="col-span-2">
-            <label className="label">Description *</label>
+          <div className="col-span-2 space-y-1">
+            <label className="label">Product Description *</label>
             <textarea value={form.description} onChange={e => set('description', e.target.value)}
-              rows={3} placeholder="Describe your product…"
+              rows={3} placeholder="Provide extensive details about specifications, materials, warranty..."
               className="input resize-none" />
           </div>
           <div>
             <label className="label">Category *</label>
-            <select value={form.category} onChange={e => set('category', e.target.value)} className="input appearance-none">
-              <option value="">Select category</option>
-              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <div className="relative">
+              <select value={form.category} onChange={e => set('category', e.target.value)} className="input appearance-none pr-8">
+                <option value="" className="bg-bg">Select category</option>
+                {CATEGORIES.map(c => <option key={c} value={c} className="bg-bg">{c}</option>)}
+              </select>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted/60 pointer-events-none text-[10px]">▼</span>
+            </div>
           </div>
-          <Input label="Tags"          value={form.tags}        onChange={e => set('tags', e.target.value)}         placeholder="comma, separated" />
-          <Input label="Price (₹) *"   value={form.price}       onChange={e => set('price', e.target.value)}        type="number" min="0" />
-          <Input label="Compare Price" value={form.comparePrice} onChange={e => set('comparePrice', e.target.value)} type="number" min="0" />
-          <Input label="Stock *"       value={form.stock}       onChange={e => set('stock', e.target.value)}         type="number" min="0" className="col-span-2" />
-          <div className="col-span-2">
-            <label className="label">Images</label>
+          <Input label="Tags (comma separated)"          value={form.tags}        onChange={e => set('tags', e.target.value)}         placeholder="electronics, gadget, mini" />
+          <Input label="Selling Price (₹) *"   value={form.price}       onChange={e => set('price', e.target.value)}        type="number" min="0" />
+          <Input label="Compare Price (₹)" value={form.comparePrice} onChange={e => set('comparePrice', e.target.value)} type="number" min="0" />
+          <Input label="Opening Inventory Stock *"       value={form.stock}       onChange={e => set('stock', e.target.value)}         type="number" min="0" className="col-span-2" />
+          <div className="col-span-2 space-y-1.5">
+            <label className="label">Product Media Files</label>
             <input type="file" multiple accept="image/*"
               onChange={e => setFiles(Array.from(e.target.files))}
-              className="text-xs text-subtle file:mr-3 file:py-1.5 file:px-3 file:border file:border-border file:rounded file:text-xs file:bg-tag file:text-ink hover:file:bg-ink hover:file:text-white file:transition-colors cursor-pointer" />
-            {files.length > 0 && <p className="text-xs text-muted mt-1">{files.length} file(s) selected</p>}
+              className="text-xs text-subtle file:mr-3.5 file:py-2 file:px-4 file:border file:border-primary/20 file:rounded-xl file:text-xs file:bg-primary/10 file:text-indigo-300 hover:file:bg-primary hover:file:text-white file:transition-all cursor-pointer" />
+            {files.length > 0 && <p className="text-xs text-muted/80 mt-1 font-mono">{files.length} images queued for upload</p>}
           </div>
         </div>
       </Modal>
@@ -207,17 +216,20 @@ export default function VendorProductsPage() {
       <Modal
         open={modal === 'stock'}
         onClose={() => { setModal(null); setEditing(null); }}
-        title={`Update Stock — ${editing?.title}`}
+        title="Quick Inventory Adjust"
         width="max-w-sm"
         footer={
           <>
-            <Button variant="outline" onClick={() => { setModal(null); setEditing(null); }}>Cancel</Button>
+            <Button variant="outline" onClick={() => { setModal(null); setEditing(null); }} className="rounded-xl">Cancel</Button>
             <Button onClick={() => stockMutation.mutate({ id: editing._id, stock: Number(stockVal) })}
-              loading={stockMutation.isPending}>Save</Button>
+              loading={stockMutation.isPending} className="rounded-xl">Update Stock</Button>
           </>
         }
       >
-        <Input label="New Stock Quantity" type="number" min="0" value={stockVal} onChange={e => setStockVal(e.target.value)} />
+        <div className="space-y-4">
+          <p className="text-xs text-subtle leading-relaxed">Modify current available quantities for <strong className="text-ink">{editing?.title}</strong>.</p>
+          <Input label="New Quantity" type="number" min="0" value={stockVal} onChange={e => setStockVal(e.target.value)} />
+        </div>
       </Modal>
     </div>
   );

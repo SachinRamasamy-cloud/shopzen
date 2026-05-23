@@ -13,38 +13,46 @@ export default function HomePage() {
   });
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-16 py-4">
       {/* Hero */}
-      <section className="border border-border rounded bg-surface p-10 md:p-16">
-        <div className="max-w-xl">
-          <div className="font-mono text-xs text-muted uppercase tracking-widest mb-3">Multi-vendor Platform</div>
-          <h1 className="text-3xl md:text-4xl font-semibold text-ink leading-tight mb-4">
-            Everything you need,<br />delivered to your door.
+      <section className="relative overflow-hidden border border-border/80 rounded-3xl bg-surface/25 backdrop-blur-lg p-10 md:p-20 shadow-glass">
+        {/* Futuristic background glows */}
+        <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] bg-accent/5 rounded-full blur-[80px] -z-10 pointer-events-none" />
+
+        <div className="max-w-2xl relative z-10">
+          <div className="font-mono text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-4">Multi-vendor Platform</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-ink leading-tight mb-6 tracking-tight font-heading">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300">Everything you need,</span><br />
+            delivered to your door.
           </h1>
-          <p className="text-subtle mb-6 leading-relaxed">
-            Shop from hundreds of vendors. Track your orders in real time.
+          <p className="text-subtle mb-8 text-sm md:text-base leading-relaxed max-w-lg font-normal">
+            Shop from hundreds of verified vendors. Track your orders in real time with our next-gen dashboard.
           </p>
           <Link
             to="/products"
-            className="inline-block px-6 py-2.5 bg-ink text-white text-sm font-medium rounded border border-ink hover:bg-ink/90 transition-colors"
+            className="inline-flex items-center justify-center px-8 py-3.5 bg-gradient-to-r from-indigo-500 via-indigo-600 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white text-xs font-semibold rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.25)] hover:shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
           >
-            Browse Products →
+            Browse Products &nbsp; →
           </Link>
         </div>
       </section>
 
       {/* Categories */}
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-mono text-xs font-semibold tracking-widest uppercase text-ink">Categories</h2>
-          <Link to="/products" className="text-xs text-muted hover:text-ink transition-colors">View all →</Link>
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <h2 className="font-heading text-lg font-bold text-ink">Browse Categories</h2>
+            <p className="text-[11px] text-muted font-mono mt-0.5 uppercase tracking-wider">Curated catalog filter</p>
+          </div>
+          <Link to="/products" className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">View all →</Link>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {CATEGORIES.slice(0, 10).map(cat => (
             <Link
               key={cat}
               to={`/products?category=${cat}`}
-              className="px-3 py-2.5 text-xs text-center border border-border rounded hover:border-ink/40 hover:bg-tag transition-colors text-subtle hover:text-ink"
+              className="px-4 py-3.5 text-xs text-center font-semibold border border-border/80 rounded-xl bg-surface/30 hover:border-primary/50 hover:bg-primary/5 transition-all text-subtle hover:text-ink"
             >
               {cat}
             </Link>
@@ -54,35 +62,38 @@ export default function HomePage() {
 
       {/* New arrivals */}
       <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-mono text-xs font-semibold tracking-widest uppercase text-ink">New Arrivals</h2>
-          <Link to="/products" className="text-xs text-muted hover:text-ink transition-colors">View all →</Link>
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <h2 className="font-heading text-lg font-bold text-ink">New Arrivals</h2>
+            <p className="text-[11px] text-muted font-mono mt-0.5 uppercase tracking-wider">LATEST PRODUCTS ADDED</p>
+          </div>
+          <Link to="/products" className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">View all →</Link>
         </div>
         {isLoading ? <PageLoader /> : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {data?.products?.map(p => <ProductCard key={p._id} product={p} />)}
           </div>
         )}
       </section>
 
       {/* CTA banners */}
-      <section className="grid md:grid-cols-3 gap-4">
+      <section className="grid md:grid-cols-3 gap-6">
         <Link to="/auth/register?role=vendor"
-          className="border border-border rounded p-6 hover:border-ink/30 hover:bg-surface transition-colors">
-          <div className="font-mono text-xs text-muted uppercase tracking-widest mb-2">For Businesses</div>
-          <div className="font-semibold text-ink mb-1">Sell on Store</div>
-          <div className="text-sm text-subtle">List your products and reach thousands of customers.</div>
+          className="relative overflow-hidden border border-border/80 rounded-2xl p-6 bg-surface/20 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.05)]">
+          <div className="font-mono text-[9px] font-bold text-indigo-400 uppercase tracking-wider mb-2">For Businesses</div>
+          <div className="font-heading font-bold text-ink text-base mb-1">Sell on ShopZen</div>
+          <div className="text-xs text-subtle leading-relaxed">List your products and reach thousands of digital shoppers instantly.</div>
         </Link>
         <Link to="/auth/register?role=delivery"
-          className="border border-border rounded p-6 hover:border-ink/30 hover:bg-surface transition-colors">
-          <div className="font-mono text-xs text-muted uppercase tracking-widest mb-2">For Riders</div>
-          <div className="font-semibold text-ink mb-1">Deliver with us</div>
-          <div className="text-sm text-subtle">Earn money delivering orders on your schedule.</div>
+          className="relative overflow-hidden border border-border/80 rounded-2xl p-6 bg-surface/20 hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.05)]">
+          <div className="font-mono text-[9px] font-bold text-indigo-400 uppercase tracking-wider mb-2">For Riders</div>
+          <div className="font-heading font-bold text-ink text-base mb-1">Deliver with us</div>
+          <div className="text-xs text-subtle leading-relaxed">Earn competitive payouts delivering orders on your own flexible schedule.</div>
         </Link>
-        <div className="border border-border rounded p-6 bg-ink text-white">
-          <div className="font-mono text-xs text-white/50 uppercase tracking-widest mb-2">Guarantee</div>
-          <div className="font-semibold mb-1">Secure Payments</div>
-          <div className="text-sm text-white/70">Powered by Stripe. Your data is always protected.</div>
+        <div className="relative overflow-hidden border border-indigo-500/20 rounded-2xl p-6 bg-gradient-to-br from-indigo-950/40 via-indigo-900/10 to-violet-950/40 text-ink shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+          <div className="font-mono text-[9px] font-bold text-indigo-300 uppercase tracking-wider mb-2">Guarantee</div>
+          <div className="font-heading font-bold text-ink text-base mb-1">Secure Network</div>
+          <div className="text-xs text-subtle leading-relaxed">Powered by Stripe. Your personal credentials and payments are fully encrypted.</div>
         </div>
       </section>
     </div>

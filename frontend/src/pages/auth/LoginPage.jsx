@@ -52,51 +52,58 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-bg flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] bg-accent/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+      <div className="w-full max-w-md bg-surface/25 backdrop-blur-lg border border-border/80 p-8 md:p-10 rounded-3xl shadow-glass space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <Link to="/" className="font-mono font-bold text-xl tracking-tight text-ink">STORE</Link>
-          <h1 className="mt-6 text-2xl font-semibold text-ink">Sign in</h1>
-          <p className="text-sm text-subtle mt-1">Welcome back. Enter your credentials.</p>
+        <div className="text-center">
+          <Link to="/" className="font-heading font-extrabold text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            SHOPZEN
+          </Link>
+          <h1 className="mt-4 text-xl font-bold text-ink font-heading">Welcome Back</h1>
+          <p className="text-xs text-muted/80 mt-1">Enter your details to access your account</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Email"
+            label="Email Address"
             type="email"
-            placeholder="you@example.com"
+            placeholder="name@example.com"
             value={form.email}
             onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
             error={errors.email}
             autoComplete="email"
           />
-          <Input
-            label="Password"
-            type="password"
-            placeholder="••••••••"
-            value={form.password}
-            onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-            error={errors.password}
-            autoComplete="current-password"
-          />
-
-          <div className="flex justify-end">
-            <Link to="/auth/forgot-password" className="text-xs text-muted hover:text-ink transition-colors">
-              Forgot password?
-            </Link>
+          <div className="space-y-1">
+            <Input
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+              error={errors.password}
+              autoComplete="current-password"
+            />
+            <div className="flex justify-end">
+              <Link to="/auth/forgot-password" className="text-[10px] font-mono uppercase tracking-wider text-muted hover:text-primary transition-colors">
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
-          <Button type="submit" loading={loading} className="w-full">
-            Sign in
+          <Button type="submit" loading={loading} className="w-full btn-lg mt-2">
+            Sign In
           </Button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-subtle">
-          Don't have an account?{' '}
-          <Link to="/auth/register" className="text-ink font-medium hover:underline">
-            Register
+        <div className="text-center text-xs text-subtle/90">
+          New to ShopZen?{' '}
+          <Link to="/auth/register" className="text-indigo-400 font-bold hover:text-indigo-300 transition-colors">
+            Create an account
           </Link>
         </div>
       </div>

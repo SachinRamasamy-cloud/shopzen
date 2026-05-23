@@ -19,14 +19,16 @@ export default function ProductsPage() {
   });
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold text-ink">Products</h1>
-        {data?.total !== undefined && (
-          <p className="text-sm text-subtle mt-0.5">{data.total} items found</p>
+    <div className="py-4 space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Explore Catalog</h1>
+        {data?.total !== undefined ? (
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">{data.total} products available</p>
+        ) : (
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Search or filter items</p>
         )}
       </div>
-      <div className="flex gap-8">
+      <div className="flex flex-col md:flex-row gap-8">
         <ProductFilters />
         <ProductGrid
           products={data?.products}

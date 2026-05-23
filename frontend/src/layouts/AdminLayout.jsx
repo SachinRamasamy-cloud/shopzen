@@ -44,9 +44,9 @@ export default function AdminLayout() {
     <div className="flex min-h-screen bg-bg">
       <Sidebar title="Admin" subtitle={user?.name} links={links} />
       <div className="flex-1 flex flex-col">
-        <header className="h-12 bg-surface border-b border-border flex items-center justify-between px-5">
-          <span className="font-mono text-xs text-muted tracking-wider uppercase">Admin Console</span>
-          <button onClick={handleLogout} className="text-xs text-muted hover:text-ink transition-colors">
+        <header className="h-14 bg-surface/50 backdrop-blur-md border-b border-border/80 flex items-center justify-between px-6">
+          <span className="font-heading text-xs font-semibold text-muted tracking-wider uppercase">Admin Console</span>
+          <button onClick={handleLogout} className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
             Logout
           </button>
         </header>

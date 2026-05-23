@@ -58,60 +58,66 @@ export default function DeliveryDashboardPage() {
   if (isLoading) return <PageLoader />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 py-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-ink">Delivery Dashboard</h1>
-          <p className="text-sm text-subtle mt-0.5">Manage your deliveries</p>
+          <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Delivery Console</h1>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Manage incoming rider requests and route coordinates</p>
         </div>
         <Button
           variant={data?.partner?.isOnline ? 'outline' : 'primary'}
           onClick={() => toggleOnline.mutate()}
           loading={toggleOnline.isPending}
+          className="rounded-xl"
         >
-          {data?.partner?.isOnline ? '● Online' : '○ Go Online'}
+          {data?.partner?.isOnline ? '● Online Mode' : '○ Go Online'}
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <StatCard label="Total Deliveries" value={data?.stats?.totalDeliveries || 0} />
+      <div className="grid grid-cols-2 gap-5">
+        <StatCard label="Completed Shipments" value={data?.stats?.totalDeliveries || 0} />
         <StatCard label="Total Earnings"   value={formatCurrency(data?.stats?.totalEarnings || 0)} />
       </div>
 
       {/* Live coords */}
       {coords && (
-        <div className="bg-surface border border-border rounded p-4">
-          <div className="font-mono text-xs text-muted uppercase tracking-widest mb-1">Live Position</div>
-          <div className="font-mono text-sm text-ink">{coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}</div>
-          <div className="flex gap-1 mt-2">
+        <div className="bg-surface/20 border border-border/80 rounded-2xl p-5 shadow-glass space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[9px] font-bold text-indigo-400 uppercase tracking-widest">GPS Satellites Feed</span>
+            <span className="text-[10px] font-mono text-emerald-400 animate-pulse">● Active Simulation</span>
+          </div>
+          <div className="font-mono text-sm text-ink font-bold">
+            LAT {coords.lat.toFixed(6)} &nbsp; LNG {coords.lng.toFixed(6)}
+          </div>
+          <div className="flex gap-1.5 pt-1">
             {[...Array(10)].map((_, i) => (
-              <div key={i} className={cn('h-1 flex-1 rounded', simulating ? 'bg-ink animate-pulse' : 'bg-border')} />
+              <div key={i} className={cn('h-1 flex-1 rounded-full', simulating ? 'bg-primary animate-pulse' : 'bg-border/60')} />
             ))}
           </div>
         </div>
       )}
 
       {/* Assigned orders */}
-      <div className="bg-surface border border-border rounded overflow-hidden">
-        <div className="px-5 py-3 border-b border-border flex items-center justify-between">
-          <div className="font-mono text-xs font-semibold tracking-widest uppercase text-ink">Active Deliveries</div>
-          <Badge variant={data?.partner?.isOnline ? 'success' : 'default'}>
-            {data?.partner?.isOnline ? 'Online' : 'Offline'}
+      <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+        <div className="px-5 py-4 border-b border-border/60 bg-tag/20 flex items-center justify-between">
+          <h2 className="font-heading text-sm font-bold text-ink">Active Deliveries</h2>
+          <Badge variant={data?.partner?.isOnline ? 'success' : 'default'} className="text-[9px] uppercase font-mono tracking-wider">
+            {data?.partner?.isOnline ? 'Rider Active' : 'Offline'}
           </Badge>
         </div>
-        <div className="divide-y divide-border">
+        <div className="divide-y divide-border/60">
           {data?.assignedOrders?.map(order => (
-            <div key={order._id} className="p-5">
-              <div className="flex items-start justify-between mb-3">
+            <div key={order._id} className="p-5 space-y-4">
+              <div className="flex items-start justify-between">
                 <div>
-                  <span className="font-mono text-xs font-semibold text-ink">
+                  <span className="font-mono text-xs font-bold text-ink">
                     #{order._id.slice(-8).toUpperCase()}
                   </span>
-                  <div className="text-xs text-subtle mt-0.5">
-                    {order.shippingAddress?.city}, {order.shippingAddress?.state}
+                  <div className="text-xs text-subtle/90 font-semibold mt-1">
+                    Destination: {order.shippingAddress?.line1}, {order.shippingAddress?.city}, {order.shippingAddress?.state}
                   </div>
                 </div>
-                <span className={cn('font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded-sm border',
+                <span className={cn('font-mono text-[9px] font-bold px-2.5 py-0.5 rounded-full border bg-tag text-subtle border-border',
                   ORDER_STATUS[order.deliveryStatus]?.color)}>
                   {ORDER_STATUS[order.deliveryStatus]?.label}
                 </span>
@@ -119,20 +125,20 @@ export default function DeliveryDashboardPage() {
 
               <div className="flex gap-2">
                 <Button size="sm" variant="outline"
-                  onClick={() => handleSimulate(order)} disabled={simulating}>
-                  {simulating ? 'Simulating…' : 'Simulate GPS'}
+                  onClick={() => handleSimulate(order)} disabled={simulating} className="rounded-xl">
+                  {simulating ? 'Simulating Coordinates…' : 'Simulate GPS Route'}
                 </Button>
                 <Button size="sm"
                   onClick={() => complete.mutate(order._id)}
-                  loading={complete.isPending}>
+                  loading={complete.isPending} className="rounded-xl">
                   Mark Delivered
                 </Button>
               </div>
             </div>
           ))}
           {!data?.assignedOrders?.length && (
-            <div className="text-center py-12 text-subtle text-sm">
-              {data?.partner?.isOnline ? 'No active deliveries' : 'Go online to receive orders'}
+            <div className="text-center py-16 text-muted/70 text-xs font-medium">
+              {data?.partner?.isOnline ? 'No active delivery manifests assigned' : 'Go online to query incoming requests'}
             </div>
           )}
         </div>
@@ -140,16 +146,16 @@ export default function DeliveryDashboardPage() {
 
       {/* Recent history */}
       {data?.recentDeliveries?.length > 0 && (
-        <div className="bg-surface border border-border rounded overflow-hidden">
-          <div className="px-5 py-3 border-b border-border">
-            <div className="font-mono text-xs font-semibold tracking-widest uppercase text-ink">Recent Deliveries</div>
+        <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+          <div className="px-5 py-4 border-b border-border/60 bg-tag/20">
+            <h2 className="font-heading text-sm font-bold text-ink">Recent Payouts Log</h2>
           </div>
-          <div className="divide-y divide-border">
+          <div className="divide-y divide-border/60">
             {data.recentDeliveries.map(o => (
-              <div key={o._id} className="flex items-center justify-between px-5 py-3">
-                <span className="font-mono text-xs text-ink">#{o._id.slice(-6).toUpperCase()}</span>
-                <span className="text-xs text-subtle">{formatDate(o.deliveredAt)}</span>
-                <span className="font-mono text-xs text-green-600 font-semibold">₹50</span>
+              <div key={o._id} className="flex items-center justify-between px-5 py-3.5 hover:bg-surface/20 transition-colors">
+                <span className="font-mono text-xs font-bold text-ink">#{o._id.slice(-6).toUpperCase()}</span>
+                <span className="text-xs text-muted/80 font-mono">{formatDate(o.deliveredAt)}</span>
+                <span className="font-mono text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-md">₹50.00</span>
               </div>
             ))}
           </div>

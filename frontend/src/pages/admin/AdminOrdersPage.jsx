@@ -18,61 +18,71 @@ export default function AdminOrdersPage() {
   });
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-xl font-semibold text-ink">All Orders <span className="text-subtle font-normal text-sm">({data?.total || 0})</span></h1>
-        <div className="flex gap-2 flex-wrap">
-          <select value={statusFilter} onChange={e => { setStatus(e.target.value); setPage(1); }} className="input text-xs py-1.5 w-auto">
-            <option value="">Delivery: All</option>
-            {Object.entries(ORDER_STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
-          <select value={payFilter} onChange={e => { setPay(e.target.value); setPage(1); }} className="input text-xs py-1.5 w-auto">
-            <option value="">Payment: All</option>
-            {Object.entries(PAYMENT_STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
+    <div className="space-y-6 py-4">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Transactions Audit</h1>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Global log of customer orders, billing, and fulfillment timelines</p>
+        </div>
+        <div className="flex gap-2 flex-wrap bg-surface/30 border border-border/80 p-1.5 rounded-xl">
+          <div className="relative">
+            <select value={statusFilter} onChange={e => { setStatus(e.target.value); setPage(1); }} className="input text-xs py-1.5 pr-8 w-auto appearance-none cursor-pointer">
+              <option value="" className="bg-bg">Delivery: All Statuses</option>
+              {Object.entries(ORDER_STATUS).map(([k, v]) => <option key={k} value={k} className="bg-bg">{v.label}</option>)}
+            </select>
+            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted/60 pointer-events-none text-[8px]">▼</span>
+          </div>
+
+          <div className="relative">
+            <select value={payFilter} onChange={e => { setPay(e.target.value); setPage(1); }} className="input text-xs py-1.5 pr-8 w-auto appearance-none cursor-pointer">
+              <option value="" className="bg-bg">Payment: All Statuses</option>
+              {Object.entries(PAYMENT_STATUS).map(([k, v]) => <option key={k} value={k} className="bg-bg">{v.label}</option>)}
+            </select>
+            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted/60 pointer-events-none text-[8px]">▼</span>
+          </div>
         </div>
       </div>
 
       {isLoading ? <PageLoader /> : (
         <>
-          <div className="bg-surface border border-border rounded overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-tag">
-                  {['Order', 'Customer', 'Items', 'Total', 'Payment', 'Delivery', 'Date'].map(h => (
-                    <th key={h} className="text-left px-4 py-2.5 font-mono text-[10px] font-semibold tracking-widest uppercase text-muted">{h}</th>
+                <tr className="border-b border-border/60 bg-tag/30">
+                  {['Order Ref', 'Customer Details', 'Manifest Size', 'Net Received', 'Payment Status', 'Delivery Stage', 'Transaction Date'].map(h => (
+                    <th key={h} className="px-5 py-3 font-mono text-[9px] font-bold tracking-wider uppercase text-muted/70">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {data?.orders?.map(o => (
-                  <tr key={o._id} className="hover:bg-tag/50 transition-colors">
-                    <td className="px-4 py-3 font-mono text-xs">#{o._id.slice(-8).toUpperCase()}</td>
-                    <td className="px-4 py-3">
-                      <div className="text-subtle">{o.user?.name}</div>
-                      <div className="text-xs text-muted">{o.user?.email}</div>
+                  <tr key={o._id} className="hover:bg-surface/20 transition-colors">
+                    <td className="px-5 py-4 font-mono font-bold text-ink">#{o._id.slice(-8).toUpperCase()}</td>
+                    <td className="px-5 py-4">
+                      <div className="font-bold text-ink">{o.user?.name}</div>
+                      <div className="text-[10px] text-muted/70 font-mono mt-0.5">{o.user?.email}</div>
                     </td>
-                    <td className="px-4 py-3 text-subtle text-xs">{o.items?.length}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{formatCurrency(o.total)}</td>
-                    <td className="px-4 py-3">
-                      <span className={cn('font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded-sm border',
+                    <td className="px-5 py-4 text-subtle font-medium">{o.items?.length || 0} items</td>
+                    <td className="px-5 py-4 font-mono font-semibold text-indigo-400">{formatCurrency(o.total)}</td>
+                    <td className="px-5 py-4">
+                      <span className={cn('font-mono text-[9px] font-bold px-2 py-0.5 rounded-full border bg-tag text-subtle border-border',
                         PAYMENT_STATUS[o.paymentStatus]?.color)}>
                         {PAYMENT_STATUS[o.paymentStatus]?.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={cn('font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded-sm border',
+                    <td className="px-5 py-4">
+                      <span className={cn('font-mono text-[9px] font-bold px-2 py-0.5 rounded-full border bg-tag text-subtle border-border',
                         ORDER_STATUS[o.deliveryStatus]?.color)}>
                         {ORDER_STATUS[o.deliveryStatus]?.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted">{formatDate(o.createdAt)}</td>
+                    <td className="px-5 py-4 text-muted/80 font-mono text-[10px]">{formatDate(o.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             {!data?.orders?.length && (
-              <div className="text-center py-12 text-subtle text-sm">No orders found</div>
+              <div className="text-center py-16 text-muted/70 text-xs">No customer orders matching selected filters found</div>
             )}
           </div>
           <Pagination page={page} pages={Math.ceil((data?.total || 0) / 20)} onChange={setPage} />

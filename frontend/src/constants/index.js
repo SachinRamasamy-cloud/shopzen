@@ -6,19 +6,19 @@ export const ROLES = {
 };
 
 export const ORDER_STATUS = {
-  processing:       { label: 'Processing',       color: 'text-amber-600  bg-amber-50  border-amber-200' },
-  packed:           { label: 'Packed',            color: 'text-blue-600   bg-blue-50   border-blue-200'  },
-  out_for_delivery: { label: 'Out for Delivery',  color: 'text-purple-600 bg-purple-50 border-purple-200' },
-  near_location:    { label: 'Near Location',     color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
-  delivered:        { label: 'Delivered',          color: 'text-green-600  bg-green-50  border-green-200'  },
-  cancelled:        { label: 'Cancelled',          color: 'text-red-600    bg-red-50    border-red-200'    },
+  processing:       { label: 'Processing',       color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+  packed:           { label: 'Packed',            color: 'text-sky-400 bg-sky-500/10 border-sky-500/20' },
+  out_for_delivery: { label: 'Out for Delivery',  color: 'text-fuchsia-400 bg-fuchsia-500/10 border-fuchsia-500/20' },
+  near_location:    { label: 'Near Location',     color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20' },
+  delivered:        { label: 'Delivered',          color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
+  cancelled:        { label: 'Cancelled',          color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
 };
 
 export const PAYMENT_STATUS = {
-  pending:  { label: 'Pending',  color: 'text-amber-600 bg-amber-50 border-amber-200' },
-  paid:     { label: 'Paid',     color: 'text-green-600 bg-green-50 border-green-200' },
-  failed:   { label: 'Failed',   color: 'text-red-600   bg-red-50   border-red-200'   },
-  refunded: { label: 'Refunded', color: 'text-gray-600  bg-gray-50  border-gray-200'  },
+  pending:  { label: 'Pending',  color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+  paid:     { label: 'Paid',     color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
+  failed:   { label: 'Failed',   color: 'text-rose-400 bg-rose-500/10 border-rose-500/20' },
+  refunded: { label: 'Refunded', color: 'text-slate-400 bg-slate-500/10 border-slate-500/20' },
 };
 
 export const CATEGORIES = [

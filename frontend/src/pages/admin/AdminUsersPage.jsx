@@ -32,21 +32,24 @@ export default function AdminUsersPage() {
   const roleBadge = { user: 'user', vendor: 'vendor', delivery: 'delivery', admin: 'admin' };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6 py-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-ink">Users <span className="text-subtle font-normal text-sm">({data?.total || 0})</span></h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">User Accounts</h1>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Review user roles, verification levels, and enable/disable states</p>
+        </div>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
         <input placeholder="Search name or email…" onChange={e => debouncedSearch(e.target.value)}
           className="input max-w-xs" />
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1 bg-surface/30 border border-border/80 p-1 rounded-xl">
           {ROLES.map(r => (
             <button key={r} onClick={() => { setRole(r); setPage(1); }}
-              className={cn('px-3 py-1.5 text-xs border rounded capitalize transition-colors',
-                role === r ? 'bg-ink text-white border-ink' : 'border-border hover:bg-tag')}>
-              {r || 'All'}
+              className={cn('px-3 py-1.5 text-xs font-semibold rounded-lg capitalize transition-all',
+                role === r ? 'bg-primary text-white shadow-glow-primary' : 'hover:bg-primary/10 hover:text-ink text-subtle')}>
+              {r || 'All Roles'}
             </button>
           ))}
         </div>
@@ -54,35 +57,38 @@ export default function AdminUsersPage() {
 
       {isLoading ? <PageLoader /> : (
         <>
-          <div className="bg-surface border border-border rounded overflow-hidden">
-            <table className="w-full text-sm">
+          <div className="bg-surface/20 border border-border/80 rounded-2xl overflow-hidden shadow-glass">
+            <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-border bg-tag">
-                  {['User', 'Role', 'Verified', 'Status', 'Joined', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-4 py-2.5 font-mono text-[10px] font-semibold tracking-widest uppercase text-muted">{h}</th>
+                <tr className="border-b border-border/60 bg-tag/30">
+                  {['User Profile', 'Role Group', 'Verified', 'Active State', 'Joined Date', 'Actions'].map(h => (
+                    <th key={h} className="px-5 py-3 font-mono text-[9px] font-bold tracking-wider uppercase text-muted/70">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-border/60">
                 {data?.users?.map(u => (
-                  <tr key={u._id} className="hover:bg-tag/50 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-ink">{u.name}</div>
-                      <div className="text-xs text-muted">{u.email}</div>
+                  <tr key={u._id} className="hover:bg-surface/20 transition-colors">
+                    <td className="px-5 py-4">
+                      <div className="font-bold text-ink">{u.name}</div>
+                      <div className="text-[10px] text-muted/70 font-mono mt-0.5">{u.email}</div>
                     </td>
-                    <td className="px-4 py-3"><Badge variant={roleBadge[u.role]}>{u.role}</Badge></td>
-                    <td className="px-4 py-3">
-                      <span className={cn('font-mono text-[10px]', u.isEmailVerified ? 'text-green-600' : 'text-amber-600')}>
-                        {u.isEmailVerified ? 'Yes' : 'No'}
+                    <td className="px-5 py-4">
+                      <Badge variant={roleBadge[u.role]} className="text-[9px] uppercase font-mono tracking-wider">{u.role}</Badge>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={cn('font-mono font-bold text-[10px] px-2 py-0.5 rounded-md border',
+                        u.isEmailVerified ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20')}>
+                        {u.isEmailVerified ? 'Verified' : 'Unverified'}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={u.isActive ? 'success' : 'danger'}>{u.isActive ? 'Active' : 'Disabled'}</Badge>
+                    <td className="px-5 py-4">
+                      <Badge variant={u.isActive ? 'success' : 'danger'} className="text-[9px] uppercase font-mono tracking-wider">{u.isActive ? 'Active' : 'Disabled'}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted">{formatDate(u.createdAt)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-4 text-muted/80 font-mono text-[10px]">{formatDate(u.createdAt)}</td>
+                    <td className="px-5 py-4">
                       <Button size="sm" variant={u.isActive ? 'outline' : 'primary'}
-                        onClick={() => toggle.mutate(u._id)} loading={toggle.isPending}>
+                        onClick={() => toggle.mutate(u._id)} loading={toggle.isPending} className="rounded-xl">
                         {u.isActive ? 'Disable' : 'Enable'}
                       </Button>
                     </td>
@@ -91,7 +97,7 @@ export default function AdminUsersPage() {
               </tbody>
             </table>
             {!data?.users?.length && (
-              <div className="text-center py-12 text-subtle text-sm">No users found</div>
+              <div className="text-center py-16 text-muted/70 text-xs">No users matching current filters found</div>
             )}
           </div>
           <Pagination page={page} pages={Math.ceil((data?.total || 0) / 20)} onChange={setPage} />

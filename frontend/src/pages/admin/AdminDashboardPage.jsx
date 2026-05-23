@@ -1,11 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../../api/index.js';
-import { formatCurrency, formatDate, cn } from '../../utils/index.js';
-import { StatCard, PageLoader, Badge, Table } from '../../components/ui/index.jsx';
+import { formatCurrency } from '../../utils/index.js';
+import { StatCard, PageLoader } from '../../components/ui/index.jsx';
 import { QUERY_KEYS } from '../../constants/index.js';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js';
-import toast from 'react-hot-toast';
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip);
 
 export default function AdminDashboardPage() {
@@ -21,39 +20,46 @@ export default function AdminDashboardPage() {
   const chartData = {
     labels:   opd.map(d => d._id),
     datasets: [{
-      label: 'Orders',
+      label: 'Orders Processed',
       data:  opd.map(d => d.orders),
-      backgroundColor: '#1a1917',
-      borderRadius: 3,
+      backgroundColor: 'rgba(99, 102, 241, 0.85)',
+      hoverBackgroundColor: '#a855f7',
+      borderRadius: 6,
     }],
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 py-4">
       <div>
-        <h1 className="text-xl font-semibold text-ink">Platform Overview</h1>
-        <p className="text-sm text-subtle mt-0.5">Real-time metrics across the platform</p>
+        <h1 className="text-2xl font-bold tracking-tight text-ink font-heading">Administration Hub</h1>
+        <p className="text-xs font-mono uppercase tracking-wider text-muted mt-1">Real-time metrics and platform metrics overview</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard label="Platform Revenue"  value={formatCurrency(data?.stats?.platformRevenue || 0)} />
         <StatCard label="Total Orders"      value={data?.stats?.totalOrders || 0} />
-        <StatCard label="Active Users"      value={data?.stats?.totalUsers || 0} />
-        <StatCard label="Active Vendors"    value={data?.stats?.totalVendors || 0} />
-        <StatCard label="Total Products"    value={data?.stats?.totalProducts || 0} />
-        <StatCard label="Pending Vendors"   value={data?.stats?.pendingVendors || 0} sub="Awaiting approval" />
-        <StatCard label="Pending Delivery"  value={data?.stats?.pendingDelivery || 0} sub="Awaiting approval" />
+        <StatCard label="Registered Users"      value={data?.stats?.totalUsers || 0} />
+        <StatCard label="Active Merchants"    value={data?.stats?.totalVendors || 0} />
+        <StatCard label="Listed Products"    value={data?.stats?.totalProducts || 0} />
+        <StatCard label="Pending Merchants"   value={data?.stats?.pendingVendors || 0} sub="Awaiting validation" />
+        <StatCard label="Pending Riders"  value={data?.stats?.pendingDelivery || 0} sub="Awaiting validation" />
       </div>
 
-      <div className="bg-surface border border-border rounded p-5">
-        <div className="font-mono text-xs font-semibold tracking-widest uppercase text-ink mb-4">Orders (Last 30 Days)</div>
+      <div className="bg-surface/20 border border-border/80 rounded-2xl p-6 shadow-glass space-y-4">
+        <div className="font-heading text-sm font-bold text-ink">Orders Activity (Last 30 Days)</div>
         {opd.length ? (
-          <Bar data={chartData} options={{
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { x: { grid: { display: false } }, y: { grid: { color: '#ece9e3' } } },
-          }} />
-        ) : <div className="text-center py-12 text-subtle text-sm">No order data yet</div>}
+          <div className="h-[260px] flex items-center">
+            <Bar data={chartData} options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false }, ticks: { color: 'rgba(245,244,255,0.5)', font: { size: 9, family: 'monospace' } } },
+                y: { grid: { color: '#1b163d' }, ticks: { color: 'rgba(245,244,255,0.5)', font: { size: 9, family: 'monospace' } } }
+              },
+            }} />
+          </div>
+        ) : <div className="text-center py-16 text-muted/70 text-xs">No orders recorded in this time range</div>}
       </div>
     </div>
   );

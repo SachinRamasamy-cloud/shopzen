@@ -1,4 +1,3 @@
-// OTP Verification
 import { useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -55,18 +54,23 @@ export function VerifyOTPPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8">
-          <Link to="/" className="font-mono font-bold text-xl tracking-tight text-ink">STORE</Link>
-          <h1 className="mt-6 text-2xl font-semibold text-ink">Verify email</h1>
-          <p className="text-sm text-subtle mt-1">
-            Enter the 6-digit code sent to <strong>{state?.email}</strong>
+    <div className="min-h-screen bg-bg flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] bg-accent/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+      <div className="w-full max-w-md bg-surface/25 backdrop-blur-lg border border-border/80 p-8 md:p-10 rounded-3xl shadow-glass space-y-6">
+        <div className="text-center">
+          <Link to="/" className="font-heading font-extrabold text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            SHOPZEN
+          </Link>
+          <h1 className="mt-4 text-xl font-bold text-ink font-heading">Verify Email</h1>
+          <p className="text-xs text-muted/80 mt-1">
+            Enter the 6-digit OTP code sent to <strong className="text-indigo-400 font-mono">{state?.email}</strong>
           </p>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="flex gap-2 justify-center mb-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex gap-2 justify-center">
             {otp.map((d, i) => (
               <input
                 key={i}
@@ -76,16 +80,16 @@ export function VerifyOTPPage() {
                 value={d}
                 onChange={e => handleChange(i, e.target.value)}
                 onKeyDown={e => handleKeyDown(i, e)}
-                className="w-11 h-12 text-center text-lg font-mono font-semibold border border-border rounded focus:outline-none focus:border-ink transition-colors bg-surface"
+                className="w-11 h-12 text-center text-lg font-mono font-bold border border-border/80 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-surface/40 text-ink"
               />
             ))}
           </div>
-          <Button type="submit" loading={loading} className="w-full">Verify</Button>
+          <Button type="submit" loading={loading} className="w-full btn-lg">Verify OTP Code</Button>
         </form>
 
-        <div className="mt-4 text-center">
-          <button onClick={resend} className="text-xs text-muted hover:text-ink transition-colors">
-            Didn't receive a code? Resend
+        <div className="text-center">
+          <button onClick={resend} className="text-xs font-semibold text-muted hover:text-primary transition-colors bg-tag px-3.5 py-2 rounded-xl border border-border/80">
+            Didn't receive code? Resend
           </button>
         </div>
       </div>
@@ -111,29 +115,34 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8">
-          <Link to="/" className="font-mono font-bold text-xl tracking-tight text-ink">STORE</Link>
-          <h1 className="mt-6 text-2xl font-semibold text-ink">Reset password</h1>
-          <p className="text-sm text-subtle mt-1">We'll send a reset link to your email.</p>
+    <div className="min-h-screen bg-bg flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/4 right-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/4 w-[350px] h-[350px] bg-accent/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+      <div className="w-full max-w-md bg-surface/25 backdrop-blur-lg border border-border/80 p-8 md:p-10 rounded-3xl shadow-glass space-y-6">
+        <div className="text-center">
+          <Link to="/" className="font-heading font-extrabold text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            SHOPZEN
+          </Link>
+          <h1 className="mt-4 text-xl font-bold text-ink font-heading">Reset Password</h1>
+          <p className="text-xs text-muted/80 mt-1">We'll send a password recovery link to your inbox</p>
         </div>
         {sent ? (
-          <div className="bg-green-50 border border-green-200 rounded p-4 text-sm text-green-700">
-            Reset link sent to <strong>{email}</strong>. Check your inbox.
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5 text-xs text-emerald-300 leading-relaxed text-center shadow-glass">
+            Reset authorization link dispatched to <strong className="text-indigo-300 font-mono">{email}</strong>. Check spam or filters if not visible.
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="label">Email</label>
+            <div className="space-y-1">
+              <label className="label">Email Address</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="you@example.com" className="input" />
+                placeholder="name@example.com" className="input" />
             </div>
-            <Button type="submit" loading={loading} className="w-full">Send reset link</Button>
+            <Button type="submit" loading={loading} className="w-full btn-lg mt-2">Send Recovery Link</Button>
           </form>
         )}
-        <div className="mt-4 text-center">
-          <Link to="/auth/login" className="text-xs text-muted hover:text-ink transition-colors">Back to login</Link>
+        <div className="text-center">
+          <Link to="/auth/login" className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">Back to Sign In</Link>
         </div>
       </div>
     </div>
@@ -161,19 +170,25 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8">
-          <Link to="/" className="font-mono font-bold text-xl tracking-tight text-ink">STORE</Link>
-          <h1 className="mt-6 text-2xl font-semibold text-ink">New password</h1>
+    <div className="min-h-screen bg-bg flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/4 right-1/4 w-[350px] h-[350px] bg-primary/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/4 w-[350px] h-[350px] bg-accent/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+
+      <div className="w-full max-w-md bg-surface/25 backdrop-blur-lg border border-border/80 p-8 md:p-10 rounded-3xl shadow-glass space-y-6">
+        <div className="text-center">
+          <Link to="/" className="font-heading font-extrabold text-2xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            SHOPZEN
+          </Link>
+          <h1 className="mt-4 text-xl font-bold text-ink font-heading">New Credentials</h1>
+          <p className="text-xs text-muted/80 mt-1">Set a new, secure password for your account</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+          <div className="space-y-1">
             <label className="label">New Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-              placeholder="Min 6 characters" className="input" />
+              placeholder="••••••••" className="input" />
           </div>
-          <Button type="submit" loading={loading} className="w-full">Reset Password</Button>
+          <Button type="submit" loading={loading} className="w-full btn-lg mt-2">Update Password</Button>
         </form>
       </div>
     </div>
